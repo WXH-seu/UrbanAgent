@@ -20,11 +20,17 @@ def main():
         print("-", skill_name)
 
     skill_call = {
-        "skill": "move_one_cell",
+        "skill": "follow_waypoints",
         "vehicle": "F-01",
         "args": {
-            "direction": "E"
-        }
+            "waypoints": [
+                {"x": 17.525, "y": 22.474, "z": 0.0},
+                {"x": 25.000, "y": 22.474, "z": 0.0},
+                {"x": 25.000, "y": 35.000, "z": 0.0}
+            ],
+            "start_heading": "E",
+            "y_axis_down": False
+            }
     }
 
     print("\n========== Skill Call ==========")
