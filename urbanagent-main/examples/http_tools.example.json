@@ -1,0 +1,14 @@
+{
+  "tools": [
+    {
+      "name": "httpbin_echo_get",
+      "description": "Demo GET: calls httpbin with query param `foo` (no API key). For integration testing only.",
+      "method": "GET",
+      "url": "https://httpbin.org/get?foo={foo}",
+      "headers": {},
+      "args_schema": {
+        "foo": "string"
+      }
+    }
+  ]
+}

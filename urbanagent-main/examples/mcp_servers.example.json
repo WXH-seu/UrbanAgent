@@ -1,0 +1,9 @@
+{
+  "servers": [
+    {
+      "alias": "demo",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-everything"]
+    }
+  ]
+}

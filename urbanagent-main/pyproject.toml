@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "urbanagent"
+version = "0.1.0"
+description = "UrbanAgent: cognition→planning→execution→synthesis for city emergency dispatch (mock sandbox + LLM)."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "openai>=1.0",
+    "anthropic>=0.40",
+    "python-dotenv>=1.0",
+    "httpx>=0.27",
+    "mcp>=1.2",
+    "python-socketio[asyncio_client]>=5.11",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "pytest-asyncio"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["urbanagent*"]

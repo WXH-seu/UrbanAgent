@@ -1,0 +1,26 @@
+.env
+.pypirc
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.venv*/
+venv/
+*.egg-info/
+
+# Build artifacts (sdist + wheel produced by `python -m build`)
+build/
+dist/
+.DS_Store
+.ruff_cache/
+.mypy_cache/
+logs/
+*.log
+agents/*/memory/
+
+# Demo runtime artifacts (resources, indexes, copied files)
+demo_workspace/
+
+# Local copies of upstream projects kept for reference; install via pip instead.
+ms_agent/
+ms-agent-skills/
