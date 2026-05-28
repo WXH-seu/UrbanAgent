@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from myagent.robot_control.robot_executor import RobotExecutor
-
+from myagent.skills.transbot_skills import follow_waypoints
 
 @dataclass
 class GridPose:
@@ -90,6 +90,77 @@ class TransbotAgentSkills:
                 best_cell = cell
 
         return best_cell
+
+    async def goto_route_waypoints(
+        self,
+        route_waypoints: list[dict[str, Any]],
+        *,
+        start_heading: str = "E",
+        y_axis_down: bool = False,
+    ) -> None:
+        """
+        执行 UrbanAgent / CARLA GlobalRoutePlanner 输出的 waypoint 路径。
+
+        route_waypoints:
+        [
+            {"x": 10.0, "y": 10.0, "z": 0.0},
+            {"x": 12.0, "y": 10.0, "z": 0.0},
+            ...
+        ]
+
+        当前实现：
+        1. 规范化 waypoint 坐标
+        2. 调用 follow_waypoints() 生成 RobotExecutor action plan
+        3. 调用 RobotExecutor 执行动作
+        """
+        print(
+            f"[Transbot] follow route_waypoints: "
+            f"{len(route_waypoints)} points"
+        )
+
+        normalized_waypoints: list[dict[str, float]] = []
+
+        for i, wp in enumerate(route_waypoints, start=1):
+            if not isinstance(wp, dict):
+                raise ValueError(f"invalid waypoint at index {i}: {wp!r}")
+
+            point = {
+                "x": float(wp.get("x", 0.0)),
+                "y": float(wp.get("y", 0.0)),
+                "z": float(wp.get("z", 0.0)),
+            }
+            normalized_waypoints.append(point)
+
+            print(f"[Transbot] waypoint {i}: {point}")
+
+        if len(normalized_waypoints) < 2:
+            print("[Transbot] route_waypoints 少于 2 个点，只执行 stop")
+            await self.stop()
+            return
+
+        skill_result = follow_waypoints(
+            waypoints=normalized_waypoints,
+            vehicle="UGV-01",
+            start_heading=start_heading,
+            y_axis_down=y_axis_down,
+        )
+
+        plan = skill_result.get("actions", [])
+
+        print(
+            f"[Transbot] waypoint route converted to "
+            f"{len(plan)} RobotExecutor actions"
+        )
+
+        if not plan:
+            print("[Transbot] waypoint route 生成的 plan 为空，只执行 stop")
+            await self.stop()
+            return
+
+        await self._execute_plan_async(plan)
+
+        last = normalized_waypoints[-1]
+        self.current_cell = self.coord_to_cell(last["x"], last["y"])
 
     def plan_path(self, start: str, target: str) -> list[str]:
         start_pose = self.grid[start]

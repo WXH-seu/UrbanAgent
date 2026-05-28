@@ -231,13 +231,18 @@ class TransbotBridgeServer:
             # await self._emit_command_status(cmd_id, kind, "ongoing")
 
             if kind == "UGV_GOTO":
-                dest = params.get("dest") or {}
+                route_waypoints = params.get("route_waypoints")
 
-                await self.skills.goto_xy(
-                    float(dest.get("x", 0.0)),
-                    float(dest.get("y", 0.0)),
-                    float(dest.get("z", 0.0)),
-                )
+                if isinstance(route_waypoints, list) and route_waypoints:
+                    await self.skills.goto_route_waypoints(route_waypoints)
+                else:
+                    dest = params.get("dest") or {}
+
+                    await self.skills.goto_xy(
+                        float(dest.get("x", 0.0)),
+                        float(dest.get("y", 0.0)),
+                        float(dest.get("z", 0.0)),
+                    )
 
             elif kind == "UGV_EXTINGUISH":
                 incident_id = str(params.get("incident_id", ""))
